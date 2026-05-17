@@ -1,0 +1,1519 @@
+/* ============================================
+   INVITACIÓN XV AÑOS – NATALY
+   Hoja de estilos principal
+   ============================================ */
+
+/* Variables globales de color y fuente */
+:root {
+    --rosa:        #C2185B;
+    --rosa-deep:   #880E4F;
+    --rosa-light:  #F8BBD0;
+    --rosa-pale:   #FFF0F7;
+    --dorado:      #C9A96E;
+    --dorado-light:#F0E2C8;
+    --crema:       #FFFCF8;
+    --oscuro:      #3B1A28;
+    --gris-rosa:   #7A5060;
+}
+
+html {
+    font-size: 90%; /* 1rem = 12px  (antes era 62.5% = 10px)
+                       Subir este valor agranda TODO proporcionalmente
+                       porque casi todos los tamaños usan rem */
+    box-sizing: border-box;
+    /* *** scroll-behavior: hace que al dar clic en links internos
+       el desplazamiento sea suave en lugar de saltar directo */
+    scroll-behavior: smooth;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Jost', sans-serif;
+    font-size: 1.6rem;
+    background-color: var(--crema);
+    color: var(--oscuro);
+    /* *** overflow-x: hidden evita la barra de scroll horizontal
+       cuando algún elemento sobresale accidentalmente del ancho */
+    overflow-x: hidden;
+    position: relative; /* ← necesario para que el ::before se posicione bien */    
+}
+
+/* Imagen de fondo principal */
+body::before {
+    content: '';
+    position: absolute; /* ← ya no se mueve con el scroll */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* ← ajusta la altura a tu gusto */
+    background-image: url('Img/imagen_3.png'); /* ← tu nuevo PNG */
+    background-size: cover; /* ajusta la imagen al ancho sin recortarla */
+    background-repeat: no-repeat;
+    background-position: top center;
+    pointer-events: none;
+    z-index: 1; /* para que esté detrás de todo el contenido */
+    opacity: 0.9;
+}
+
+/* ── FLORES DE FONDO ── */
+.flor-fondo {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    font-size: 1.5rem;
+    opacity: 0;
+    /* cada flor usa su propia duración y delay via JS */
+    animation: respirar var(--duracion, 3s) ease-in-out var(--delay, 0s) infinite;
+}
+
+#overlayEntrada .flor-fondo {
+    position: absolute;
+    z-index: 10000;
+}
+
+@keyframes respirar {
+    0%   { transform: scale(0.8) rotate(0deg);  opacity: 0.15; }
+    50%  { transform: scale(1.2) rotate(10deg); opacity: 0.35; }
+    100% { transform: scale(0.8) rotate(0deg);  opacity: 0.15; }
+}
+/* ============================================
+   CANVAS DE PÉTALOS
+   ============================================ */
+
+/* *** El canvas se pone en position: fixed para que cubra toda
+   la pantalla aunque el usuario haga scroll hacia abajo.
+   pointer-events: none permite hacer clic "a través" del canvas
+   sin que bloquee los botones o links que están debajo */
+#petals-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ============================================
+   HERO – SECCIÓN PRINCIPAL
+   ============================================ */
+
+.hero {
+    position: relative;
+    /* *** min-height: 100vh hace que la sección ocupe
+       como mínimo el 100% de la altura visible del navegador */
+    animation-play-state: paused;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 3rem 2rem;
+    /* background: linear-gradient(160deg, #FFF0F7 0%, #FFFCF8 50%, #FFF5F0 100%); */
+    overflow: hidden;
+    z-index: 1; /* para que esté por encima del fondo y las flores */
+}
+
+/* *** ::before es un pseudo-elemento: crea un elemento visual
+   sin necesidad de escribirlo en el HTML. Se usa para fondos
+   decorativos extra. Siempre necesita content: '' para existir */
+.hero::before {
+    content: '';
+    position: absolute;
+    /* *** inset: 0 es lo mismo que top:0; right:0; bottom:0; left:0
+       Es un shorthand moderno para cubrir todo el padre */
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 40% at 20% 30%, rgba(194,24,91,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 70%, rgba(201,169,110,0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.hero-ornament {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(30px, 5vw, 48px);
+    font-weight: 500;
+    letter-spacing: 0.4em;
+    color: #c2953d; /* ← dorado oscuro */
+    text-transform: uppercase;
+    margin: 1rem 0; /* espacio debajo del adorno */
+    padding: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
+}
+
+.hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    /* *** clamp(mínimo, preferido, máximo): el tamaño se adapta
+       al ancho de pantalla pero nunca sale de ese rango.
+       Muy útil para tipografía responsive sin media queries */
+    font-size: clamp(42px, 10vw, 140px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--rosa-deep);
+    opacity: 0;
+    margin: 0 0 0.8rem;
+    padding: 1;
+    animation: fadeUp 1s ease 0.6s forwards;
+}
+
+.hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(16px, 3.2vw, 48px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--gris-rosa);
+    margin-bottom: 1rem;
+    padding: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.9s forwards;
+}
+
+/* Contenedor del separador decorativo dorado */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem auto;
+    /* *** width: fit-content hace que el contenedor se ajuste
+       exactamente al tamaño de su contenido, sin más ni menos */
+    width: fit-content;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.1s forwards;
+}
+
+.divider-line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--dorado));
+}
+
+/* La clase .rev invierte el degradado para el lado derecho */
+.divider-line.rev {
+    background: linear-gradient(90deg, var(--dorado), transparent);
+}
+
+.divider-diamond {
+    width: 6px;
+    height: 6px;
+    background: var(--dorado);
+    transform: rotate(45deg);
+}
+
+.hero-phrase {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(14px, 2.2vw, 28px);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.7;
+    max-width: 600px;
+    color: var(--gris-rosa);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.3s forwards;
+}
+
+.hero-date {
+    margin-top: 2.5rem;
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 2vw, 1.3rem);
+    letter-spacing: 0.3em;
+    color: var(--dorado);
+    margin-top: 2rem;
+    letter-spacing: 0.4rem;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.5s forwards;
+}
+
+/* Flecha animada que indica desplazarse hacia abajo */
+.scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 1s ease 2.5s forwards;
+}
+
+.scroll-hint span {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--dorado);
+    text-transform: uppercase;
+}
+
+.scroll-arrow {
+    width: 20px;
+    height: 20px;
+    border-right: 1px solid var(--dorado);
+    border-bottom: 1px solid var(--dorado);
+    transform: rotate(45deg);
+    animation: bounce 1.5s ease infinite;
+}
+
+/* ============================================
+   SECCIONES GENERALES
+   ============================================ */
+
+section {
+    position: relative;
+    z-index: 1;
+    padding: 5rem 2rem;
+}
+
+/* Etiqueta pequeña en dorado que va arriba del título */
+.section-label {
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    color: var(--dorado);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.section-title {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 300;
+    color: var(--rosa-deep);
+    margin-bottom: 3rem;
+}
+
+/* ============================================
+   SECCIÓN PADRES
+   ============================================ */
+
+.parents-section {
+    background-color:none;
+    z-index: 1; /* para que esté por encima del fondo pero debajo de las flores */
+}
+
+.parents-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.parent-card {
+    text-align: center;
+    position: relative;
+    padding: 1rem 1rem;
+    border: 1px solid var(--rosa-light);
+    border-radius: 2px;
+    background-color: var(--rosa-pale);
+    min-width: 300px;
+}
+
+/* Sombra decorativa en la esquina inferior derecha de la tarjeta */
+.parent-card::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: -8px;
+    bottom: -8px;
+    border: 1px solid var(--dorado-light);
+    border-radius: 2px;
+    z-index: -1;
+}
+
+.parent-role {
+    font-size: 1.5vh;
+    letter-spacing: 0.25em;
+    color: var(--dorado);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.parent-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5vh;
+    font-weight: 400;
+    color: var(--rosa-deep);
+    line-height: 1.3;
+}
+
+/* ============================================
+   SECCIÓN CUENTA REGRESIVA
+   ============================================ */
+
+.countdown-section {
+    background: linear-gradient(135deg, var(--rosa-deep) 0%, #6A1040 100%);
+    color: #ffffff;
+}
+
+/* Se sobreescribe el color de esas clases solo dentro del countdown */
+.countdown-section .section-label { color: var(--dorado-light); }
+.countdown-section .section-title  { color: #ffffff; }
+
+.countdown-grid {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.countdown-box {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    padding: 1.5rem 2rem;
+    min-width: 110px;
+    /* *** backdrop-filter aplica efectos visuales al fondo que
+       está DETRÁS del elemento. blur(4px) difumina ese fondo,
+       creando el efecto de vidrio esmerilado (glassmorphism) */
+    backdrop-filter: blur(4px);
+}
+
+.countdown-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    line-height: 1;
+    color: #ffffff;
+    display: block;
+}
+
+.countdown-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--dorado-light);
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+    display: block;
+}  
+
+/* MEJORAS */
+
+/* ── MEJORAS COUNTDOWN ── */
+.countdown-section {
+    padding: 5rem 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.countdown-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 70%);
+    animation: pulsoFondo 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pulsoFondo {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.countdown-grid {
+    margin-top: 2.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.countdown-box {
+    transition: transform 0.3s ease;
+    animation: brillarBox 3s ease-in-out infinite;
+    position: relative;
+}
+
+.countdown-box:hover {
+    transform: translateY(-5px) scale(1.08);
+     /* Al hacer hover, la caja se eleva ligeramente y aumenta de tamaño */
+}
+
+.countdown-box:nth-child(1) { animation-delay: 0s; }
+.countdown-box:nth-child(2) { animation-delay: 0.5s; }
+.countdown-box:nth-child(3) { animation-delay: 1s; }
+.countdown-box:nth-child(4) { animation-delay: 1.5s; }
+
+@keyframes brillarBox {
+    0%, 100% { box-shadow: 0 0 10px rgba(201,169,110,0.1); }
+    50% { box-shadow: 0 0 25px rgba(201,169,110,0.35), 0 0 50px rgba(194,24,91,0.15); }
+}
+
+/* Línea dorada arriba de cada caja */
+.countdown-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    width: 70%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--dorado), transparent);
+}
+
+/* Separador entre cajas */
+.countdown-box:not(:last-child)::after {
+    content: '✦';
+    position: absolute;
+    right: -1.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--dorado);
+    font-size: 0.7rem;
+    opacity: 0.6;
+}
+
+.countdown-number {
+    text-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+@media (max-width: 780px) {
+    .countdown-box:not(:last-child)::after {
+        display: none;
+    }
+    .countdown-grid {
+        gap: 0.8rem;
+    }
+    .countdown-box {
+        min-width: 80px;
+        padding: 1.2rem 0.8rem;
+    }
+}
+
+/* ============================================
+   SECCIÓN DETALLES (fecha, hora, lugar)
+   ============================================ */
+
+.details-section {
+    background-color: var(--crema);
+}
+
+.details-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* *** flex: 1 1 200px  =  flex-grow:1, flex-shrink:1, flex-basis:200px
+   Le dice al elemento que puede crecer y reducirse, pero que su 
+   tamaño base es 200px. Crea columnas responsive sin media query */
+.detail-item {
+    text-align: center;
+    flex: 1 1 200px;
+}
+
+.detail-icon {
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--rosa-light);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.detail-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--dorado);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.detail-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--rosa-deep);
+    line-height: 1.3;
+}
+
+.detail-sub {
+    font-size: 0.85rem;
+    color: var(--gris-rosa);
+    margin-top: 0.25rem;
+}
+
+.detail-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.detail-link:hover .detail-icon {
+    background: var(--rosa-light);
+    transform: scale(1.1);
+}
+
+.detail-link:hover .detail-value {
+    color: var(--dorado);
+}
+
+/* ============================================
+   SECCIÓN GALERÍA – CARRUSEL
+   ============================================ */
+
+.gallery-section {
+    background-color: #ffffff;
+}
+
+/* Contenedor principal del carrusel */
+.carousel {
+    position: relative;
+    max-width: 750px;       /* ← CAMBIA ESTE VALOR para hacer el carrusel más ancho o angosto */
+    margin: 0 auto;
+    overflow: hidden;       /* oculta las fotos que están fuera de vista */
+    border-radius: 4px;
+}
+
+/* Pista: fila horizontal con todas las fotos juntas.
+   JS la mueve con transform: translateX() para "deslizar" */
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease; /* ← CAMBIA 0.5s para hacer la transición más rápida o lenta */
+}
+
+/* Cada slide ocupa exactamente el 100% del carrusel visible */
+.carousel-slide {
+    min-width: 100%;
+    height: 600px;          /* ← CAMBIA ESTE VALOR para hacer las fotos más altas o bajas */
+}
+
+/* Las imágenes reales llenan el slide completo sin deformarse */
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* muestra la foto COMPLETA sin recortar */
+    background-color: #FFF0F7; /* fondo rosa en los espacios vacíos */
+    display: block;
+}
+
+/* Placeholder mientras no hay foto real */
+.slide-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #FFF0F7, #FCEAF5);
+    border: 2px dashed var(--rosa-light);
+    gap: 0.75rem;
+}
+
+.slide-placeholder svg  { opacity: 0.4; }
+.slide-placeholder span {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rosa-light);
+}
+
+/* Botones anterior / siguiente */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.45);  /* ← CAMBIA el color del botón aquí */
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 48px;            /* ← CAMBIA para hacer los botones más grandes */
+    height: 48px;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn:hover {
+    background-color: var(--rosa-deep);  /* ← Color del botón al pasar el mouse */
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Posición del botón anterior (izquierda) */
+.carousel-btn--prev {
+    left: 1rem;             /* ← CAMBIA para mover el botón más adentro o afuera */
+}
+
+/* Posición del botón siguiente (derecha) */
+.carousel-btn--next {
+    right: 1rem;
+}
+
+/* Contenedor de los puntitos indicadores */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 0 0.5rem;
+}
+
+/* Estilo de cada puntito */
+.carousel-dot {
+    width: 8px;             /* ← CAMBIA para hacer los puntitos más grandes */
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--rosa-light);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    padding: 0;
+}
+
+/* Puntito de la foto activa */
+.carousel-dot.activo {
+    background-color: var(--rosa);  /* ← Color del puntito activo */
+    transform: scale(1.3);
+}
+
+/* ============================================
+   SECCIÓN REGALO (lluvia de sobres)
+   ============================================ */
+
+.gift-section {
+    background-color:NONE;
+    padding-bottom: 2rem;
+}
+
+.gift-card {
+    max-width: 460px;
+    margin: 0 auto;
+    text-align: center;
+    border: 1px solid var(--rosa-light);
+    border-radius: 2px;
+    padding: 2.5rem 2.5rem 2rem;
+    background-color: #ffffff;
+    position: relative;
+}
+
+.gift-card::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: -8px;
+    bottom: -8px;
+    border: 1px solid var(--dorado-light);
+    border-radius: 2px;
+    z-index: -1;
+}
+
+.gift-icon {
+    width: 80px;
+    height: 80px;
+    border: 1px solid var(--dorado-light);
+    border-radius: 50%;
+    margin: 0 auto 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--rosa-pale);
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    /* *** user-select: none evita que el texto o elemento
+       se "seleccione" con el cursor al hacer clic repetidamente */
+    user-select: none;
+}
+
+.gift-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 20px rgba(194, 24, 91, 0.2);
+}
+
+.gift-icon:active {
+    transform: scale(0.94);
+}
+
+.gift-hint {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--dorado);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    animation: pulse-hint 2s ease infinite;
+}
+
+.gift-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--rosa-deep);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+}
+
+.gift-sub {
+    font-size: 0.88rem;
+    color: var(--gris-rosa);
+    line-height: 1.7;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.gift-divider {
+    margin: 1.5rem auto 1rem;
+    color: var(--rosa-light);
+    font-size: 1.3rem;
+    letter-spacing: 0.5em;
+}
+
+.gift-badge {
+    display: inline-block;
+    padding: 0.4rem 1.5rem;
+    border: 1px solid var(--rosa-light);
+    border-radius: 50px;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--rosa);
+    background-color: var(--rosa-pale);
+}
+
+/* *** Las partículas del burst se crean con JavaScript y se agregan
+   al body dinámicamente. Sus variables CSS (--tx, --ty, etc.)
+   también las asigna JS, por eso se usan con var() aquí */
+.burst-particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 1.5rem;
+    z-index: 9999;
+    animation: burst-fly var(--dur, 0.9s) ease-out forwards;
+}
+
+/* ============================================
+   SECCIÓN CONFIRMACIÓN (WhatsApp)
+   ============================================ */
+
+.rsvp-section {
+    background: linear-gradient(160deg, #FFF0F7, #FFFCF8);
+}
+
+.rsvp-form {
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-group label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dorado);
+}
+
+/* Se aplican los mismos estilos a los tres tipos de campo a la vez */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--rosa-light);
+    border-radius: 2px;
+    background-color: #ffffff;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    color: var(--oscuro);
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+/* El borde cambia de color cuando el campo está activo/seleccionado */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--rosa);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.btn-confirm {
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    background-color: var(--rosa-deep);
+    color: #ffffff;
+    border: none;
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-confirm:hover {
+    background-color: var(--rosa);
+    transform: translateY(-1px);
+}
+
+/* Mensaje de confirmación exitosa (oculto por defecto, JS lo muestra) */
+.confirm-success {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+}
+
+.confirm-success .check {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--rosa);
+}
+
+.confirm-success p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--rosa-deep);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+footer {
+    background-color: var(--oscuro);
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    padding: 2.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+}
+
+footer .footer-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--dorado);
+    display: block;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+}
+
+/* ============================================
+   ANIMACIONES con @keyframes
+   ============================================ */
+
+/* Sube y aparece (usado en el hero) */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Solo aparece sin moverse */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Rebota hacia abajo (flecha del hero) */
+@keyframes bounce {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50%       { transform: rotate(45deg) translateY(5px); }
+}
+
+/* Pulso de opacidad (texto del sobre) */
+@keyframes pulse-hint {
+    0%, 100% { opacity: 0.5; }
+    50%       { opacity: 1; }
+}
+
+/* *** Esta animación usa variables CSS (--tx, --ty, --rot, --dur)
+   que JavaScript asigna individualmente a cada partícula,
+   lo que permite que cada una vuele en dirección distinta */
+@keyframes burst-fly {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translate(var(--tx, 0px), var(--ty, -200px)) rotate(var(--rot, 360deg)) scale(0.2); opacity: 0; }
+}
+
+
+/* DRESS CODE */
+.dress-code {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+}
+
+.dress-card {
+    background: linear-gradient(135deg, #fff5f9, #fffcf8, #fff0f5);
+    border: 1px solid rgba(194, 149, 61, 0.3);
+    border-radius: 2px;
+    padding: 3rem 2.5rem;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 
+        0 0 30px rgba(194, 24, 91, 0.08),
+        0 0 60px rgba(201, 169, 110, 0.06),
+        inset 0 0 30px rgba(255, 255, 255, 0.8);
+    position: relative;
+    animation: brillar 3s ease-in-out infinite;
+}
+
+@keyframes brillar {
+    0%, 100% { box-shadow: 0 0 30px rgba(194, 24, 91, 0.08), 0 0 60px rgba(201, 169, 110, 0.06); }
+    50% { box-shadow: 0 0 40px rgba(194, 24, 91, 0.18), 0 0 80px rgba(201, 169, 110, 0.15); }
+}
+
+.dress-ornamento {
+    font-size: 1.5rem;
+    color: var(--dorado);
+    margin-bottom: 0.5rem;
+}
+
+.dress-titulo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 600;
+    color: var(--rosa-deep);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.dress-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 1rem auto;
+}
+
+.dress-linea {
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--dorado));
+    display: block;
+}
+
+.dress-linea.rev {
+    background: linear-gradient(90deg, var(--dorado), transparent);
+}
+
+.dress-diamante {
+    width: 6px;
+    height: 6px;
+    background: var(--dorado);
+    transform: rotate(45deg);
+    display: block;
+}
+
+.dress-texto {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--gris-rosa);
+    font-style: italic;
+    margin: 0.3rem 0;
+}
+
+.dress-color {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 700;
+    color: var(--rosa-deep);
+    letter-spacing: 0.2em;
+    margin: 0.5rem 0;
+    text-shadow: 0 0 20px rgba(194, 24, 91, 0.2);
+}
+
+.dress-sub {
+    font-family: 'Jost', sans-serif;
+    font-size: clamp(0.75rem, 2vw, 0.9rem);
+    color: var(--gris-rosa);
+    letter-spacing: 0.1em;
+    margin-top: 1.2rem;
+    opacity: 0.8;
+}
+/* ============================================
+   CLASE REVEAL – animación al hacer scroll
+   ============================================ */
+
+/* Estado inicial: invisible y desplazado hacia abajo */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Cuando JS agrega la clase .visible, el elemento aparece */
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+/* ------------------------ */
+/* OVERLAY */
+/* -------------------------- */
+.sobre-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999; /*para que esté por encima de todo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #ffd6e7, #ffecf4, #ffd6e7);
+    transition: opacity 1s ease;
+    overflow: hidden; /* para que las flores no se salgan del overlay */
+}
+
+.tarjeta {
+    position: relative;
+    width: 100vw;
+    height: 90vh;
+    display: flex;
+    border-radius: 6px;
+    /* overflow: hidden; */
+    box-shadow: 0 20px 60px rgba(194,24,91,0.2);
+}
+
+.panel {
+    width: 50%;
+    height: 100%;
+    position: relative; /* ← necesario para las flores */
+}
+
+.panel.izquierdo {
+    background: linear-gradient(160deg, #fff0f7, #fde8f0, #fffcf8);
+    border-right: 1px solid rgba(194,24,91,0.12);
+    box-shadow: inset -6px 0 12px rgba(0,0,0,0.04);
+    overflow: visible;
+}
+
+.panel.derecho {
+    background: linear-gradient(200deg, #fffcf8, #fef0f5, #fde8f0);
+    overflow: visible;
+}
+
+.tarjeta-flores-top {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 55%;
+    height: auto;
+    pointer-events: none;
+    transform: scaleY(-1); /* ← voltea hacia arriba */
+}
+
+.tarjeta-flores-izq-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 55%;
+    height: auto;
+    pointer-events: none;
+    transform: scaleX(-1) scaleY(-1); /* ← voltea en ambos ejes */
+}
+
+.tarjeta-flores {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 55%;
+    height: auto;
+    pointer-events: none;
+}
+
+.tarjeta-flores-izq {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 55%;
+    height: auto;
+    pointer-events: none;
+    transform: scaleX(-1);
+}
+
+.sello {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px;
+    height: 110px;
+    background: radial-gradient(circle, #c2185b, #880e4f);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: pulseSello 2s ease-in-out infinite;
+    z-index: 3;
+    cursor: pointer;
+    padding: 1rem;
+}
+
+/* ------------------- */
+/* NOMBRES DEL OVERLAY  */
+/* ---------------------- */
+.panel-contenido {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem; /* espacio entre el nombre y el texto "MIS XV" */
+    z-index: 4;
+    width: 100%;
+    text-align: center;
+}
+
+/* ------------------- */
+/* TEXTO DEL OVERLAY MIS XV */
+/* ---------------------- */
+.panel-texto {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4rem, 8vw, 7rem);
+    font-weight: 700;
+    color: var(--dorado);
+    letter-spacing: 0.2em;
+    text-shadow: 
+        0 0 20px rgba(201,169,110,0.6),
+        0 0 40px rgba(201,169,110,0.3);
+    animation: brillarTexto 2s ease-in-out infinite;
+    z-index: 4;
+}
+
+@keyframes brillarTexto {
+    0%, 100% { text-shadow: 0 0 20px rgba(201,169,110,0.6), 0 0 40px rgba(201,169,110,0.3); }
+    50% { text-shadow: 0 0 30px rgba(201,169,110,0.9), 0 0 60px rgba(201,169,110,0.5), 0 0 80px rgba(201,169,110,0.2); }
+}
+
+@keyframes pulseSello {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(194,24,91,0.3), 0 0 0 8px rgba(194,24,91,0.1), 0 8px 25px rgba(194,24,91,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(194,24,91,0.4), 0 0 0 14px rgba(194,24,91,0.15), 0 8px 35px rgba(194,24,91,0.5); }
+}
+
+.sello-letra {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.95);
+    line-height: 1;
+}
+
+.sello-texto {
+    display: none;
+}
+
+.sello-circulo-texto {
+    position: absolute;
+    pointer-events: none;
+    width: 110px;
+    height: 110px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: girarTexto 10s linear infinite;
+}
+
+.sello-circulo-texto text {
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    fill: rgba(255,255,255,0.85);
+    letter-spacing: 1px;
+}
+
+.sobre-overlay.cerrando {
+    opacity: 0;
+}
+
+.tarjeta.abriendo {
+    opacity: 0;
+    transform: scale(1.05);
+    transition: all 0.8s ease;
+}
+
+@keyframes girarTexto {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ============================================
+   RESPONSIVE
+   Breakpoints:
+     Móvil chico  → max-width: 480px
+     Móvil grande → max-width: 768px
+     Tablet       → min-width: 481px y max-width: 1024px
+     Desktop      → min-width: 768px  (ya funciona por defecto)
+   ============================================ */
+
+/* ── TABLET (hasta 1024px) ─────────────────── */
+@media (max-width: 1024px) {
+
+    .gallery-grid {
+        max-width: 700px;
+    }
+
+    .details-grid {
+        max-width: 600px;
+    }
+}
+
+/* ── MÓVIL GRANDE (hasta 768px) ────────────── */
+@media (max-width: 780px) {
+
+    /* Hero: reduce padding lateral */
+    .hero {
+        padding: 1.5rem 2rem;
+        justify-content: center;
+    }
+
+    .hero-title {
+        font-size: clamp(60px, 12vw, 140px);
+        margin: 0 0 1rem;
+    }
+
+    .hero-subtitle {
+        font-size: clamp(16px, 6vw, 48px);
+        margin-bottom: 1rem;
+        padding:1.5rem 2rem 1.5rem;
+    }
+
+    .hero-phrase {
+        font-size: clamp(18px, 12vw, 28px);
+        margin: 0 2rem;
+        padding:1.5rem 2rem 1.5rem;
+    }
+
+    .hero-date {
+        font-size: clamp(30px, 6vw, 48px);
+        font-weight: 500;
+        margin-top: 2rem;
+        padding: 2rem;
+        letter-spacing: 0.4em;
+    }
+
+    .hero-ornament {
+        font-size: clamp(30px, 6vw, 48px);
+        margin: 1rem 0;
+        padding:1.5rem 2rem;
+    }
+
+    .tarjeta-flores,
+    .tarjeta-flores-izq,
+    .tarjeta-flores-top,
+    .tarjeta-flores-izq-top {
+        width: 100%;
+    }
+
+    /* Secciones: menos espacio vertical */
+    section {
+        padding: 4rem 1.5rem;
+    }
+
+    .sello {
+        margin-top: 5rem;
+    }
+    .panel-texto {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+    }
+    
+    .panel-nombre {
+        font-size: clamp(1.2rem, 4vw, 1.8rem);
+    }
+    /* Padres: las tarjetas se apilan en columna */
+    .parents-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .parent-card {
+        min-width: 300px;
+        width: 100%;
+        max-width: 340px;
+    }
+
+    /* Countdown: cajas más compactas */
+    .countdown-grid {
+        gap: 1rem;
+    }
+
+    .countdown-box {
+        min-width: 90px;
+        padding: 1.2rem 1.5rem;
+    }
+
+    .countdown-number {
+        font-size: 2.8rem;
+    }
+
+    /* Detalles: los tres ítems en columna */
+    .details-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .detail-item {
+        flex: none;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    /* Galería: altura más baja en tablet */
+    .carousel-slide {
+        height: 360px;
+    }
+
+    /* Regalo: menos padding */
+    .gift-card {
+        padding: 2rem 1.5rem;
+        margin: 0 1rem;
+    }
+
+    /* Formulario: se adapta al ancho */
+    .rsvp-form {
+        padding: 0 0.5rem;
+    }
+}
+
+/* ── MÓVIL CHICO (hasta 480px) ─────────────── */
+@media (max-width: 480px) {
+
+    /* Hero: más compacto */
+    .hero {
+        padding: 3rem 1rem 5rem;
+    }
+
+    .hero-ornament {
+        font-size: 0.8rem;
+        letter-spacing: 0.25em;
+    }
+
+    /* La frase no lleva salto de línea manual en móvil */
+    .hero-phrase br {
+        display: none;
+    }
+
+    .hero-phrase {
+        font-size: 0.95rem;
+        padding: 0 0.5rem;
+    }
+
+    .hero-date {
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+    }
+
+    /* Secciones: padding mínimo */
+    section {
+        padding: 3rem 1rem;
+    }
+
+    .section-label {
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+    }
+
+    /* Tarjetas de padres: ancho completo */
+    .parent-card {
+        min-width: unset;
+        width: 100%;
+        max-width: 100%;
+        padding: 1.5rem 1rem;
+    }
+
+    /* Countdown: 2 x 2 en móvil chico */
+    .countdown-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        max-width: 280px;
+    }
+
+    .countdown-box {
+        min-width: unset;
+        padding: 1rem;
+    }
+
+    .countdown-number {
+        font-size: 2.4rem;
+    }
+
+    .countdown-label {
+        font-size: 0.6rem;
+    }
+
+    /* Galería: altura compacta en móvil */
+    .carousel-slide {
+        height: 260px;
+    }
+
+    .carousel-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 1.4rem;
+    }
+
+    /* Regalo: sin la sombra de esquina para que no se corte */
+    .gift-card {
+        margin: 0;
+        padding: 1.5rem 1rem;
+    }
+
+    .gift-card::before {
+        display: none;
+    }
+
+    .gift-icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    /* Formulario: campos a pantalla completa */
+    .rsvp-form {
+        padding: 0;
+        width: 100%;
+    }
+
+    .btn-confirm {
+        width: 100%;
+        font-size: 0.75rem;
+    }
+
+    /* Footer: texto más chico */
+    footer {
+        padding: 2rem 1rem;
+        font-size: 0.7rem;
+    }
+
+    footer .footer-name {
+        font-size: 1.2rem;
+    }
+
+}
+

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mis XV Años – Nataly</title>
+
+    <!-- Normalize resetea los estilos por defecto del navegador -->
+    <link rel="stylesheet" href="normalize.css" />
+
+    <!-- Fuentes de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Hoja de estilos principal -->
+    <link rel="stylesheet" href="invitacion.css" />
+  </head>
+  <body>
+    <!-- *** Canvas: elemento HTML5 para dibujar gráficos con JavaScript -->
+    <canvas id="petals-canvas"></canvas>
+    <!-- CANCION -->
+    <audio id="miAudio" loop>
+      <source src="audio/Sparks.mp3" type="audio/mpeg" />
+    </audio>
+    <!-- Overlay de entrada -->
+
+    <div class="sobre-overlay" id="overlayEntrada">
+      <div class="tarjeta" id="sobre" onclick="abrirSobre()">
+        <div class="panel izquierdo">
+          <img src="Img/imagen_2.png" class="tarjeta-flores-izq" alt="flores" />
+          <img
+            src="Img/imagen_2.png"
+            class="tarjeta-flores-izq-top"
+            alt="flores"
+          />
+          <div class="panel-contenido">
+            <span class="panel-texto">MIS</span>
+          </div>
+        </div>
+        <div class="panel derecho">
+          <img src="Img/imagen_2.png" class="tarjeta-flores" alt="flores" />
+          <img src="Img/imagen_2.png" class="tarjeta-flores-top" alt="flores" />
+          <div class="panel-contenido">
+            <span class="panel-texto">XV</span>
+          </div>
+        </div>
+        <div class="sello">
+          <span class="sello-letra">N</span>
+          <svg class="sello-circulo-texto" viewBox="0 0 100 100">
+            <path
+              id="curva"
+              d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
+              fill="none"
+            />
+            <text>
+              <textPath href="#curva" startOffset="15%">
+                ✦ TOCA AQUÍ PARA ABRIR ✦
+              </textPath>
+            </text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO: sección principal con el nombre y la frase -->
+    <div class="hero">
+      <p class="hero-ornament">✦ Mis XV Años ✦</p>
+      <h1 class="hero-title">Nataly Jazmin</h1>
+      <p class="hero-subtitle">¡¡ Te invita a celebrar sus XV años !!</p>
+
+      <!-- Decoración: líneas doradas con diamante al centro -->
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-diamond"></div>
+        <div class="divider-line rev"></div>
+      </div>
+
+      <p class="hero-phrase">
+        "Hay momentos inolvidables que se atesoran <br />
+        en el corazón para siempre, por esa razón <br />
+        quiero que compartas conmigo este día tan especial."
+      </p>
+
+      <p class="hero-date">18 · Julio · 2026</p>
+
+      <!-- Indicador visual para desplazarse hacia abajo -->
+      <div class="scroll-hint">
+        <span>Desplázate</span>
+        <div class="scroll-arrow"></div>
+      </div>
+    </div>
+
+    <!-- PADRES: nombres de mamá y papá -->
+    <section class="parents-section">
+      <p class="section-label reveal">Con la bendición de</p>
+      <h2 class="section-title reveal">Sus papás</h2>
+      <div class="parents-grid">
+        <div class="parent-card reveal">
+          <p class="parent-role">Mamá</p>
+          <p class="parent-name">Erika Jazmin<br />Gutiérrez Guzmán</p>
+        </div>
+        <div class="parent-card reveal">
+          <p class="parent-role">Papá</p>
+          <p class="parent-name">José Luis<br />Avendaño García</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- COUNTDOWN: contador regresivo hacia la fecha de la fiesta -->
+    <section class="countdown-section">
+      <p class="section-label reveal">Tiempo restante</p>
+      <h2 class="section-title reveal">Faltan…</h2>
+      <div class="countdown-grid">
+        <div class="countdown-box reveal">
+          <!-- Los id's son necesarios para que el JS actualice los números -->
+          <span class="countdown-number" id="cd-days">--</span>
+          <span class="countdown-label">Días</span>
+        </div>
+        <div class="countdown-box reveal">
+          <span class="countdown-number" id="cd-hours">--</span>
+          <span class="countdown-label">Horas</span>
+        </div>
+        <div class="countdown-box reveal">
+          <span class="countdown-number" id="cd-mins">--</span>
+          <span class="countdown-label">Minutos</span>
+        </div>
+        <div class="countdown-box reveal">
+          <span class="countdown-number" id="cd-secs">--</span>
+          <span class="countdown-label">Segundos</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETALLES: fecha, hora y lugar -->
+    <section class="details-section">
+      <p class="section-label reveal">Los detalles</p>
+      <h2 class="section-title reveal">¿Cuándo y dónde?</h2>
+      <div class="details-grid">
+        <div class="detail-item reveal">
+          <div class="detail-icon">📅</div>
+          <p class="detail-label">Fecha</p>
+          <p class="detail-value">Sábado<br />18 de julio, 2026</p>
+        </div>
+        <div class="detail-item reveal">
+          <div class="detail-icon">🕒</div>
+          <p class="detail-label">Hora</p>
+          <p class="detail-value">3:00 pm</p>
+          <p class="detail-sub">Recepción</p>
+        </div>
+        <div class="detail-item reveal">
+          <a
+            href="https://maps.app.goo.gl/3xboFvJXXCDG363a9"
+            target="_blank"
+            class="detail-link"
+          >
+            <div class="detail-icon">📍</div>
+            <p class="detail-label">Lugar</p>
+            <p class="detail-value">Centro Recreativo San Martín</p>
+            <p class="detail-sub">Toca para ver en Maps 🗺️</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DRESS CODE -->
+    <section class="dress-code">
+      <div class="dress-card">
+        <p class="dress-ornamento">✦</p>
+        <h2 class="dress-titulo">Dress Code</h2>
+        <div class="dress-divider">
+          <span class="dress-linea"></span>
+          <span class="dress-diamante"></span>
+          <span class="dress-linea rev"></span>
+        </div>
+        <p class="dress-texto">El color</p>
+        <p class="dress-color">ROSA</p>
+        <p class="dress-texto">está reservado para la festejada</p>
+        <p class="dress-sub">Te pedimos elegir otro color para tu outfit 🌸</p>
+      </div>
+    </section>
+
+    <!-- GALERÍA: carrusel de fotos con botones anterior/siguiente -->
+    <section class="gallery-section">
+      <p class="section-label reveal">Recuerdos</p>
+      <h2 class="section-title reveal">Galería de fotos</h2>
+
+      <div class="carousel reveal">
+        <div class="carousel-track" id="carousel-track">
+          <div class="carousel-slide">
+            <img src="Img/im1.jpeg" alt="Nataly sesión de fotos" />
+          </div>
+
+          <div class="carousel-slide">
+            <img src="Img/im2.jpeg" alt="Nataly sesión de fotos" />
+          </div>
+
+          <div class="carousel-slide">
+            <img src="Img/im3.jpeg" alt="Nataly sesión de fotos" />
+          </div>
+
+          <div class="carousel-slide">
+            <img src="Img/im4.jpeg" alt="Nataly sesión de fotos" />
+          </div>
+
+          <div class="carousel-slide">
+            <img src="Img/im5.jpeg" alt="Nataly sesión de fotos" />
+          </div>
+        </div>
+
+        <button
+          class="carousel-btn carousel-btn--prev"
+          onclick="moverCarrusel(-1)"
+        >
+          &#8249;
+        </button>
+        <button
+          class="carousel-btn carousel-btn--next"
+          onclick="moverCarrusel(1)"
+        >
+          &#8250;
+        </button>
+
+        <div class="carousel-dots" id="carousel-dots"></div>
+      </div>
+    </section>
+
+    <!-- REGALO: lluvia de sobres, toca el ícono para la animación -->
+    <section class="gift-section">
+      <p class="section-label reveal">Sugerencia de regalo</p>
+      <h2 class="section-title reveal">Lluvia de sobres</h2>
+      <div class="gift-card reveal">
+        <!-- onclick llama a la función burstEnvelope() del archivo JS -->
+        <div class="gift-icon" id="envelope-btn" onclick="burstEnvelope(this)">
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#C9A96E"
+            stroke-width="1.3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <polyline points="22,4 12,13 2,4" />
+          </svg>
+        </div>
+        <p class="gift-hint">✦ toca el sobre ✦</p>
+        <p class="gift-text">Lo más importante para mí es celebrar contigo.</p>
+        <p class="gift-sub">
+          Si deseas hacerme un regalo, una aportación en efectivo será de gran
+          ayuda.
+        </p>
+        <div class="gift-divider"><span>✉</span></div>
+        <p class="gift-badge">Lluvia de sobres</p>
+      </div>
+    </section>
+
+    <!-- CONFIRMACIÓN: formulario que envía por WhatsApp -->
+    <section class="rsvp-section">
+      <p class="section-label reveal">¿Nos acompañas?</p>
+      <h2 class="section-title reveal">Confirma tu asistencia</h2>
+
+      <div class="rsvp-form reveal" id="rsvp-form">
+        <div class="form-group">
+          <label for="nombre">Tu nombre completo</label>
+          <input type="text" id="nombre" placeholder="Escribe tu nombre…" />
+        </div>
+        <div class="form-group">
+          <label for="asistentes">¿Cuántas personas asisten?</label>
+          <input type="number" id="asistentes" min="1" placeholder="Ej. 3" />
+        </div>
+        <div class="form-group">
+          <label for="mensaje">Mensaje para Nataly (opcional)</label>
+          <textarea
+            id="mensaje"
+            placeholder="Escribe aquí tu mensaje especial…"
+          ></textarea>
+        </div>
+        <button class="btn-confirm" onclick="confirmar()">
+          Confirmar asistencia
+        </button>
+      </div>
+
+      <!-- Mensaje de éxito, se muestra después de confirmar -->
+      <div class="confirm-success" id="confirm-success">
+        <div class="check">🌸</div>
+        <p>¡Gracias! Te esperamos con mucho cariño.</p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <span class="footer-name">Nataly</span>
+      <span> XV Años · 18 de julio 2026</span>
+    </footer>
+
+    <!-- Script al final para que el HTML ya esté cargado cuando JS lo lea -->
+    <script src="invitacion.js"></script>
+  </body>
+</html>
